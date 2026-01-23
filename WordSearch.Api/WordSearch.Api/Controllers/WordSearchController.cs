@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using WordSearch.Api.Models;
-using WordSearch.Api.Services.Interfaces;
+using WordSearch.Api.DTOs;
+using WordSearch.Api.Services;
 
 namespace WordSearch.Api.Controllers;
 
@@ -16,21 +16,20 @@ public class WordSearchController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult FindWords([FromBody] WordSearchRequest request)
+    public IActionResult Search([FromBody] WordSearchRequestDto request)
     {
         try
         {
-            var result = _service.FindWords(request);
+            var result = _service.Search(request);
             return Ok(result);
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(new { error = ex.Message });
+            return BadRequest(new { message = ex.Message });
         }
-        catch (Exception)
+        catch
         {
-            return StatusCode(500, new { error = "Internal server error" });
+            return StatusCode(500, new { message = "Unexpected server error." });
         }
     }
-
 }
