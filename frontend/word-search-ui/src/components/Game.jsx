@@ -3,7 +3,7 @@ import WordForm from "./WordForm";
 function Game() {
   return (
     <div style={{
-      backgroundColor: "#1e1e1e", // fondo oscuro
+      backgroundColor: "#1e1e1e",
       color: "white",
       minHeight: "100vh",
       display: "flex",

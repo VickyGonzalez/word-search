@@ -1,5 +1,4 @@
-import VocalcomLogo from "../assets/logo-vocalcom.svg"; // logo con fondo blanco
-//import WordSearchImage from "./assets/wordsearch.png"; // imagen del juego
+import VocalcomLogo from "../assets/logo-vocalcom.svg"; 
 
 function Home({ onStart }) {
   return (

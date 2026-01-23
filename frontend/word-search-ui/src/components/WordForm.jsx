@@ -11,7 +11,6 @@ function WordForm() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Preview en tiempo real (solo para UI)
   const handleLettersChange = (value) => {
     setLetters(value);
     setFound([]);
@@ -25,7 +24,6 @@ function WordForm() {
     setMatrix(newMatrix);
   };
 
-  // 🔹 Llamada al backend
   const handleSearch = async (e) => {
     e.preventDefault();
     setError(null);
@@ -43,7 +41,7 @@ function WordForm() {
         .filter(Boolean);
 
       const data = await searchWords({
-        matrix: rows,   // 👈 ahora string[]
+        matrix: rows,   
         words: wordList
       });
 
