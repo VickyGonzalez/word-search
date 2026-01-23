@@ -33,6 +33,10 @@ npm install
 Start the development server:
 npm run dev
 
+The frontend expects a .env file in the word-search-ui folder with the following:
+VITE_API_URL=https://localhost:7082
+⚠️ **Note:** leaving this here on purpose—don’t worry, all safe, it’s just for the challenge 😉
+
 Open your browser at the URL shown in the terminal (usually http://localhost:5173/).
 
 Backend
