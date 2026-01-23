@@ -17,6 +17,9 @@ public static class MatrixValidator
 
         foreach (var row in matrix)
         {
+            if (row == null)
+                throw new ArgumentException("Matrix rows cannot be null.");
+
             if (row.Count != columnCount)
                 throw new ArgumentException("All matrix rows must have the same length.");
         }

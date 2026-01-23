@@ -1,72 +1,94 @@
-﻿using WordSearch.Api.Models;
-using WordSearch.Api.Services.Interfaces;
+﻿using WordSearch.Api.DTOs;
 using WordSearch.Api.Utils;
 
 namespace WordSearch.Api.Services;
 
 public class WordSearchService : IWordSearchService
 {
-    public WordSearchResponse FindWords(WordSearchRequest request)
-    {
-        MatrixValidator.Validate(request.Matrix, request.Words);
+    public WordSearchResponseDto Search(WordSearchRequestDto request)
+    {       
+        var matrix = request.Matrix
+            .Select(r => r.Trim().ToLowerInvariant().ToCharArray().ToList())
+            .ToList();
 
-        var foundWords = new HashSet<string>();
-        var matrix = request.Matrix;
-        int rows = matrix.Count;
-        int cols = matrix[0].Count;
+        var words = request.Words
+            .Select(w => w.Trim().ToLowerInvariant())
+            .Where(w => !string.IsNullOrWhiteSpace(w))
+            .Distinct()
+            .ToList();
 
-        foreach (var word in request.Words.Distinct())
+        MatrixValidator.Validate(matrix, words);
+
+        var foundWords = new List<FoundWordDto>();
+
+        foreach (var word in words)
         {
-            if (ExistsInMatrix(matrix, rows, cols, word))
+            var positions = FindWord(matrix, word);
+            if (positions.Any())
             {
-                foundWords.Add(word);
+                foundWords.Add(new FoundWordDto
+                {
+                    Word = word,
+                    Positions = positions
+                });
             }
         }
 
-        return new WordSearchResponse
+        return new WordSearchResponseDto
         {
-            FoundWords = foundWords.ToList()
+            FoundWords = foundWords
         };
     }
 
-    private bool ExistsInMatrix(List<List<char>> matrix, int rows, int cols, string word)
+    private List<PositionDto> FindWord(List<List<char>> matrix, string word)
     {
-        int length = word.Length;
-
-        for (int i = 0; i < rows; i++)
+        int rows = matrix.Count;
+        int cols = matrix[0].Count;
+        var result = new List<PositionDto>();
+               
+        for (int r = 0; r < rows; r++)
         {
-            for (int j = 0; j < cols; j++)
+            for (int c = 0; c <= cols - word.Length; c++)
             {
-                // Horizontal →
-                if (j + length <= cols && MatchHorizontal(matrix, i, j, word))
-                    return true;
-
-                // Vertical ↓
-                if (i + length <= rows && MatchVertical(matrix, i, j, word))
-                    return true;
+                if (MatchHorizontal(matrix, word, r, c))
+                {
+                    for (int i = 0; i < word.Length; i++)
+                        result.Add(new PositionDto { Row = r, Col = c + i });
+                }
             }
         }
 
-        return false;
+      
+        for (int c = 0; c < cols; c++)
+        {
+            for (int r = 0; r <= rows - word.Length; r++)
+            {
+                if (MatchVertical(matrix, word, r, c))
+                {
+                    for (int i = 0; i < word.Length; i++)
+                        result.Add(new PositionDto { Row = r + i, Col = c });
+                }
+            }
+        }
+
+        return result;
     }
 
-    private bool MatchHorizontal(List<List<char>> matrix, int row, int col, string word)
+    private bool MatchHorizontal(List<List<char>> matrix, string word, int row, int col)
     {
-        for (int k = 0; k < word.Length; k++)
-        {
-            if (matrix[row][col + k] != word[k])
+        for (int i = 0; i < word.Length; i++)
+            if (matrix[row][col + i] != word[i])
                 return false;
-        }
+
         return true;
     }
 
-    private bool MatchVertical(List<List<char>> matrix, int row, int col, string word)
+    private bool MatchVertical(List<List<char>> matrix, string word, int row, int col)
     {
-        for (int k = 0; k < word.Length; k++)
-        {
-            if (matrix[row + k][col] != word[k])
+        for (int i = 0; i < word.Length; i++)
+            if (matrix[row + i][col] != word[i])
                 return false;
-        }
+
         return true;
     }
 }

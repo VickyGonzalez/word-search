@@ -1,8 +1,8 @@
-﻿using WordSearch.Api.Models;
+﻿using WordSearch.Api.DTOs;
 
-namespace WordSearch.Api.Services.Interfaces;
+namespace WordSearch.Api.Services;
 
 public interface IWordSearchService
 {
-    WordSearchResponse FindWords(WordSearchRequest request);
+    WordSearchResponseDto Search(WordSearchRequestDto request);
 }
